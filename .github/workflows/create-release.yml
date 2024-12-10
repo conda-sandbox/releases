@@ -1,0 +1,40 @@
+name: Create Release
+
+on:
+  # https://docs.github.com/en/webhooks/webhook-events-and-payloads#workflow_dispatch
+  workflow_dispatch:
+    inputs:
+      version:
+        description: The version to release.
+        required: true
+
+concurrency:
+  # Concurrency group that uses the workflow name and PR number if available
+  # or commit SHA as a fallback. If a new build is triggered under that
+  # concurrency group while a previous build is running it will be canceled.
+  # Repeated pushes to a PR will cancel all previous builds, while multiple
+  # merges to main will not cancel.
+  group: ${{ github.workflow }}-${{ inputs.version }}
+  cancel-in-progress: true
+
+jobs:
+  release:
+    if: '!github.event.repository.fork'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get Branch
+        shell: python
+        run: |
+          from os import environ
+          from pathlib import Path
+
+          # derive the branch from the version by dropping the `PATCH` and using `.x`
+          branch = "${{ inputs.version }}".rsplit(".", 1)[0]
+          Path(environ["GITHUB_ENV"]).write_text(f"BRANCH={branch}.x")
+
+      - name: Create Release
+        uses: conda/actions/create-release@create-release
+        with:
+          version: ${{ inputs.version }}
+          branch: ${{ env.BRANCH }}
+          token: ${{ secrets.CREATE_RELEASE }}
