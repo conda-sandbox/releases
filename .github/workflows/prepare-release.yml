@@ -38,4 +38,4 @@ jobs:
           version: ${{ inputs.version }}
           branch: ${{ env.BRANCH }}
           token: ${{ secrets.PREPARE_RELEASE_PR }}
-          branch-token: ${{ secrets.PREPARE_RELEASE_FORK }}
+          fork-token: ${{ secrets.PREPARE_RELEASE_FORK }}
