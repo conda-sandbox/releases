@@ -7,6 +7,9 @@ on:
       version:
         description: The version to release.
         required: true
+      branch-sha:
+        description: The SHA to from which to create the target branch if missing.
+        default: ${{ github.event.repository.default_branch }}
 
 concurrency:
   # Concurrency group that uses the workflow name and PR number if available
@@ -37,5 +40,6 @@ jobs:
         with:
           version: ${{ inputs.version }}
           branch: ${{ env.BRANCH }}
+          branch-sha: ${{ inputs.branch-sha }}
           token: ${{ secrets.PREPARE_RELEASE_PR }}
           fork-token: ${{ secrets.PREPARE_RELEASE_FORK }}
