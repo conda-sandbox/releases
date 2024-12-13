@@ -8,8 +8,7 @@ on:
         description: The version to release.
         required: true
       branch-sha:
-        description: The SHA to from which to create the target branch if missing.
-        default: ${{ github.event.repository.default_branch }}
+        description: The SHA from which to create the target branch if missing.
 
 concurrency:
   # Concurrency group that uses the workflow name and PR number if available
